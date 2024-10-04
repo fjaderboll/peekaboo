@@ -11,3 +11,4 @@ pip3 install thonny -U
 
 * Display: SH1107 https://github.com/peter-l5/SH1107
 * Heat camera: AMG8833 https://github.com/peterhinch/micropython-amg88xx
+* Shield: https://github.com/KitronikLtd/Kitronik-Pico-Robotics-Board-MicroPython
