@@ -1,14 +1,12 @@
 # Peek-a-boo
 
-# Doc
-* https://www.raspberrypi.com/documentation/microcontrollers/images/pico-2-r4-pinout.svg
+## Parts
+* Controller: [Raspberry Pi Pico H](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#pico-1-family) ([pinout](https://www.raspberrypi.com/documentation/microcontrollers/images/pico-pinout.svg))
+* Display: SH1107, https://github.com/peter-l5/SH1107
+* Heat camera: AMG8833, https://github.com/peterhinch/micropython-amg88xx
+* Motor/servo shield: Kitronik Robotics Board, https://github.com/KitronikLtd/Kitronik-Pico-Robotics-Board-MicroPython
 
-# Software
-
-```shell
-pip3 install thonny -U
-```
-
-* Display: SH1107 https://github.com/peter-l5/SH1107
-* Heat camera: AMG8833 https://github.com/peterhinch/micropython-amg88xx
-* Shield: https://github.com/KitronikLtd/Kitronik-Pico-Robotics-Board-MicroPython
+## IDE
+Either works:
+* Visual Studio Code - extension `MicroPico`
+* Thonny: `pip3 install thonny -U`

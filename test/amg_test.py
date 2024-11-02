@@ -1,23 +1,25 @@
-# amg_test.py Basic test of AMG8833 sensor
-
-# Released under the MIT licence.
-# Copyright (c) Peter Hinch 2019
-
-import machine
+from machine import I2C, Pin
 import utime
-import time
 from amg88xx import AMG88XX
 
+LINE_UP = '\033[1A'
+LINE_CLEAR = '\x1b[2K'
 
-i2c = machine.I2C(0)
-print('I2C scan: ',i2c.scan())
-time.sleep(1)
+i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=100_000)
+
 sensor = AMG88XX(i2c)
-time.sleep(1)
+utime.sleep(1)
+
+print('AMG88XX, 8x8 pixel heat camera, temperatures in Celsius:')
 while True:
-    utime.sleep(0.2)
     sensor.refresh()
+
     for row in range(8):
-        print()
         for col in range(8):
-            print('{:4d}'.format(sensor[row, col]), end='')
+            temp = sensor[row, col]
+            print('{:3d}'.format(temp), end='')
+        print()
+    
+    utime.sleep(0.4)
+    for row in range(8):
+        print(LINE_UP, end=LINE_CLEAR)

@@ -1,8 +1,3 @@
-# amg_test.py Basic test of AMG8833 sensor
-
-# Released under the MIT licence.
-# Copyright (c) Peter Hinch 2019
-
 from machine import I2C, Pin
 import utime
 import time
