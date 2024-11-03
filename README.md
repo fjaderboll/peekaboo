@@ -1,4 +1,6 @@
 # Peek-a-boo
+**NOTE** *Very early in development, it does currently not work as intended*
+
 A mobile robot that like to play hide-n-seek with you or just
 follow you around.
 
@@ -7,8 +9,6 @@ follow you around.
 More technically, it will use a heat camera to detect humans
 and ultrasonic sensors for navigating a flat surface with obstacles.
 If left unattended it will go to asleep and awoken by a PIR sensor.
-
-**NOTE** *This very early in development, it does currently not work as intended*
 
 ## Parts
 * Controller: [Raspberry Pi Pico H](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#pico-1-family) ([pinout](https://www.raspberrypi.com/documentation/microcontrollers/images/pico-pinout.svg))
