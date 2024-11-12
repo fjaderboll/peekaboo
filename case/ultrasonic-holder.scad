@@ -13,6 +13,7 @@ module us_hole() {
     d=17;
     t=10;
     dx=25.5;
+    $fn=50;
     
     // front holes
     color("yellow") translate([-t/2, -dx/2, d/2+2]) {
