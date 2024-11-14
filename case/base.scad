@@ -9,6 +9,7 @@ show_addons = true;
 use <base_clip.scad>
 use <ultrasonic-holder.scad>
 use <addon_support.scad>
+use <addon_bar_servo.scad>
 
 module base(height=bh) {
     color("gray") difference() {
@@ -79,5 +80,5 @@ if(quick_print) {
 base_clips();
 
 if(show_addons) {
-    translate([bl-30, wt, bh]) addon_bar(bw-2*wt);
+    translate([bl-30, wt, bh]) addon_bar_servo();
 }
