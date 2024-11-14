@@ -3,11 +3,12 @@ bl = 172; // base length
 bh = 22;  // base height
 wt = 2;   // wall thickness
 
-quick_print = true;
+quick_print = false;
+show_addons = true;
 
 use <base_clip.scad>
 use <ultrasonic-holder.scad>
-use <addon_holder.scad>
+use <addon_support.scad>
 
 module base(height=bh) {
     color("gray") difference() {
@@ -76,3 +77,7 @@ if(quick_print) {
     base_addon_holders();
 }
 base_clips();
+
+if(show_addons) {
+    translate([bl-30, wt, bh]) addon_bar(bw-2*wt);
+}
