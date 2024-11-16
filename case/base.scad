@@ -9,12 +9,16 @@ show_addons = true;
 use <base_clip.scad>
 use <ultrasonic-holder.scad>
 use <addon_support.scad>
-use <addon_bar_servo.scad>
+use <addon_shield.scad>
+use <addon_servo.scad>
 
 module base(height=bh) {
-    color("gray") difference() {
-        cube([bl, bw, height]);
-        translate([wt, wt, -1]) cube([bl - 2*wt, bw - 2*wt, height+2]);
+    difference() {
+        color("gray") cube([bl, bw, height]);
+        color("gray") translate([wt, wt, -1]) cube([bl - 2*wt, bw - 2*wt, height+2]);
+        
+        // hole for power switch
+        color("yellow") translate([wt/2, 71, bh/2]) rotate(90, [0, 1, 0]) cylinder(h=2*wt, d=6, center=true, $fn=40);
     }
     /*translate([-wt, -wt, -2]) {
         difference() {
@@ -30,14 +34,14 @@ module base_with_holders() {
     union() {
         difference() {
             base();
-            translate([wt, bw/2, 0]) us_hole();
-            translate([bl-wt, bw/2, 0]) rotate(180, [0, 0, 1]) us_hole();
+            translate([-7, bw/2, 0]) us_hole(); // back
+            translate([bl+7, bw/2, 0]) rotate(180, [0, 0, 1]) us_hole(); // front
             translate([bl/2, -7, 0]) rotate(90, [0, 0, 1]) us_hole();
             translate([bl/2, bw+7, 0]) rotate(-90, [0, 0, 1]) us_hole();
         }
         color("aqua") union() {
-            translate([wt, bw/2, 0]) us_holder();
-            translate([bl-wt, bw/2, 0]) rotate(180, [0, 0, 1]) us_holder();
+            translate([-7, bw/2, 0]) us_holder(); // back
+            translate([bl+7, bw/2, 0]) rotate(180, [0, 0, 1]) us_holder(); // front
             translate([bl/2, -7, 0]) rotate(90, [0, 0, 1]) us_holder();
             translate([bl/2, bw+7, 0]) rotate(-90, [0, 0, 1]) us_holder();
         }
@@ -57,12 +61,14 @@ module base_clips() {
 module base_addon_holders(height=bh) {
     module side() {
         // inside
-        translate([30, wt, height]) addon_holder();
-        translate([60, wt, height]) addon_holder();
-        translate([bl-30, wt, height]) addon_holder();
+        translate([25, wt, height]) addon_holder();
+        translate([100, wt, height]) addon_holder();
+        translate([bl-20, wt, height]) addon_holder();
         // outside
-        translate([30, 0, height]) mirror([0, 1, 0]) addon_holder();
-        translate([bl-30, 0, height]) mirror([0, 1, 0]) addon_holder();
+        translate([10, 0, height]) mirror([0, 1, 0]) addon_holder();
+        translate([55, 0, height]) mirror([0, 1, 0]) addon_holder();
+        translate([bl-55, 0, height]) mirror([0, 1, 0]) addon_holder();
+        translate([bl-10, 0, height]) mirror([0, 1, 0]) addon_holder();
     }
     color("yellow") {
         side();
@@ -80,5 +86,6 @@ if(quick_print) {
 base_clips();
 
 if(show_addons) {
-    translate([bl-30, wt, bh]) addon_bar_servo();
+    translate([25, bw/2, bh+wt]) addon_shield();
+    translate([bl-20, bw/2, bh+wt]) addon_servo();
 }

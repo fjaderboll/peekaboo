@@ -2,7 +2,7 @@ iw = 10;  // inner width
 it = 3;   // inner thickness
 h = 5;    // height
 wt = 2;   // wall thickness
-m = 0.25; // margin
+m = 0.30; // margin
 
 module addon_holder() {
     module reinforcement() {
@@ -26,7 +26,7 @@ module addon_holder() {
     }
 }
 
-module addon_clip() {
+module addon_clip(bar_length=0) {
     ch = 1.5*h;
     
     color("#fcc705") {
@@ -43,9 +43,11 @@ module addon_clip() {
     }
 }
 
-module addon_bar(width) {
+module addon_bar(width, single_clip=false) {
     addon_clip();
-    translate([0, width, 0]) mirror([0, 1, 0]) addon_clip();
+    if(!single_clip) {
+        translate([0, width, 0]) mirror([0, 1, 0]) addon_clip();
+    }
     
     color("orange")
     translate([-(iw-2*m)/2, it+wt, 0])
@@ -53,4 +55,5 @@ module addon_bar(width) {
 }
 
 addon_holder();
-addon_bar(20);
+//addon_bar(width=15, single_clip=true);
+addon_bar(width=20);

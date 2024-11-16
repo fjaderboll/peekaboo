@@ -1,7 +1,7 @@
 
 module base_clip() {
-    module base_clip_side() {
-        wb=18;
+    module base_clip_side(width=18) {
+        wb=width;
         wt=10;
         h=11;
         t=1.5;
@@ -43,7 +43,7 @@ module base_clip() {
     
     union() {
         color("red") base_clip_side();
-        color("blue") mirror([1, 0, 0]) rotate(-90, [0, 0, 1]) base_clip_side();
+        color("blue") mirror([1, 0, 0]) rotate(-90, [0, 0, 1]) base_clip_side(16);
         color("yellow") translate([-hole_x, 0, -hole_y]) sphere(d=1.5, $fn=20);
     };
 }
