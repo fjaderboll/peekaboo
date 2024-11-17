@@ -4,7 +4,7 @@ bh = 22;  // base height
 wt = 2;   // wall thickness
 
 quick_print = false;
-show_addons = true;
+show_addons = false;
 
 use <base_clip.scad>
 use <ultrasonic-holder.scad>

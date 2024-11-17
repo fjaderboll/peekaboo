@@ -7,6 +7,16 @@ module us_box() {
     color("aqua") translate([-wt, -usw/2-wt, 0]) {
         cube([ust+2*wt, usw+2*wt, ush+wt]);
     }
+    
+    s=(25.5-17)/2;
+    color("aqua")
+    translate([-wt, 0, 0])
+    linear_extrude(height=ush+wt)
+    polygon([
+        [0, s],
+        [0, -s],
+        [-s, 0]
+    ]);
 }
 
 module us_hole() {
