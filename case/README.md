@@ -1,4 +1,4 @@
-# 3D-printed case
+# 3D-printable case
 These models are made using OpenSCAD.
 
 ## Base / inside
