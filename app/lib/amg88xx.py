@@ -81,8 +81,8 @@ class AMG88XX:
             return
         raise ValueError('Invalid row {} or col {}'.format(row, col))
 
-    def __init__(self, i2c, addr=0x69):
-        if addr not in i2c.scan():
+    def __init__(self, i2c, addr=0x69, skip_scan=False):
+        if not skip_scan and addr not in i2c.scan():
             raise RuntimeError('AMG8833 not found at address 0x{:02x}'.format(addr))
         self._i2c = i2c
         self._address = addr

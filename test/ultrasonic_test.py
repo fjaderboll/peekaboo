@@ -18,10 +18,10 @@ class Ultrasonic:
         return self.last_distance
 
 sensors = [
-    Ultrasonic(16, 17, 'Front'),
-    Ultrasonic(18, 19, 'Left'),
-    Ultrasonic(20, 21, 'Right'),
-    Ultrasonic(22, 26, 'Back')
+    Ultrasonic(11, 15, 'Front'),
+    Ultrasonic(10, 14, 'Left'),
+    Ultrasonic(7, 13, 'Right'),
+    Ultrasonic(6, 12, 'Back'),
 ]
 
 while True:
