@@ -26,4 +26,4 @@ Either works:
 * Thonny: `pip3 install thonny -U`
 
 ## Deploy software
-Upload `lib/` and `main.py` into root of the Pico controller.
+Upload content in `app` into root of the Pico controller. (command `MicroPico: Upload project to Pico`)
