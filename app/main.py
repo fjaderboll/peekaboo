@@ -43,11 +43,13 @@ play_random_sound()
 move_head()
 
 
-
+us_triggers = {}
 while True:
-    for uc in ultrasonics:
-        d = uc.measure_distance()
-        if d < 5:
-            play_random_sound(1, 3)
-            print(f'Proximity {uc.get_name()}: {d:.1f} cm')
+    for us in ultrasonics:
+        d = us.measure_distance()
+        is_close = d < 5
+        if is_close and not us_triggers.get(us.get_name(), False):
+            play_random_sound(1, 2)
+            print(f'Proximity {us.get_name()}: {d:.1f} cm')
+        us_triggers[us.get_name()] = is_close
     utime.sleep(1)
