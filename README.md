@@ -16,10 +16,13 @@ If left unattended it will go to asleep and awoken by a PIR sensor.
 * Heat camera: AMG8833 ([library](https://github.com/peterhinch/micropython-amg88xx))
 * Motor/servo shield: [Kitronik Robotics Board](https://github.com/KitronikLtd/Kitronik-Pico-Robotics-Board-MicroPython) ([pinout](https://kitronik.co.uk/cdn/shop/products/5329_additional-1-kitronik-robotics-board-for-raspberry-pi-pico_800x.jpg))
 * Servo motors: 2 x SG90
-* Movement detection: PIR
+* Movement detection: PIR [SR505](https://hobbycomponents.com/sensors/1066-sr505-miniature-pir-sensor-module) **\***
 * Ultrasonic sensors: 4 x HC-SR04
 * Sound: Passive piezo buzzer
+* Power switch: Toggle switch
 * Case/structure: [3D printed parts](case/README.md)
+
+**\*** SR505 needs 5-12V to behave correctly, and the Robotics Board supply only 3.3V for peripherals.
 
 ## IDE
 Either works:

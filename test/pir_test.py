@@ -1,16 +1,19 @@
 from machine import Pin
 import time
 
-def handle_pir_rising(pin):
-	print("PIR rising:", pin.value())
+def show_pir_value(name, value):
+	print(f'PIR {name}: {value} (elapsed time: {time.ticks_diff(time.ticks_ms(), startTime)/1000:.1f} s)')
+	ledPin.value(value)
 
-def handle_pir_falling(pin):
-	print("PIR falling:", pin.value())
+def pir_irq(pin):
+	show_pir_value('irq', pin.value())
 
 pirPin = Pin(19, Pin.IN)
-print('hello')
-print("PIR initial value:", pirPin.value())
-pirPin.irq(trigger=Pin.IRQ_RISING, handler=handle_pir_rising)
-pirPin.irq(trigger=Pin.IRQ_FALLING, handler=handle_pir_falling)
+ledPin = Pin("LED", Pin.OUT)
+startTime = time.ticks_ms()
 
-time.sleep(60)
+show_pir_value('initial', pirPin.value())
+pirPin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=pir_irq)
+
+time.sleep(120)
+show_pir_value('end', pirPin.value())
