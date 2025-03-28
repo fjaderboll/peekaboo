@@ -31,3 +31,11 @@ Either works:
 
 ## Deploy software
 Upload content in folder `app` into root of the microcontroller. (VSCode command `MicroPico: Upload project to Pico`)
+
+## Abandoned paths
+I've been intrigued to use AI, and the Pico should be strong enough handle small models.
+However, TensorFlow Lite in conjuction with MicroPython posed a too great challenge at the moment.
+
+Also considered using *Pico 2 W* and connect a Bluetooth gamepad for manual driving,
+which would have come handy in generating training data for a model. However,
+at the moment native Bluetooth support is very limited.
