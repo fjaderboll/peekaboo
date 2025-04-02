@@ -7,6 +7,8 @@ import PicoRobotics
 from buzzer import Buzzer
 from ultrasonic import Ultrasonic
 
+print('Starting...')
+
 # --- init variables ---
 pirPin = Pin(19, Pin.IN)
 ledPin = Pin("LED", Pin.OUT)
@@ -62,6 +64,8 @@ pirPin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=pir_irq)
 
 play_random_sound()
 move_head()
+
+print('Started')
 
 us_triggers = {}
 while True:

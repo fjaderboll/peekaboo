@@ -1,4 +1,4 @@
-from machine import I2C, Pin
+from machine import I2C, Pin, SoftI2C
 import utime
 
 import PicoRobotics
@@ -54,26 +54,31 @@ def render_pixel(v):
     i = int(v*10/2)
     return chars[i]
 
-def update_head_position():
-    board.servoWrite(1, yaw)
-    board.servoWrite(2, pitch)
-
-def move_head(wx, wy):
+def update_head_position(new_yaw=0, new_pitch=0):
     global yaw, pitch
 
-    yaw = max(0, min(130, yaw + wx * 10))
-    pitch = max(60, min(130, pitch + wy * 10))
-    update_head_position()
+    if new_yaw != yaw:
+        yaw = new_yaw
+        board.servoWrite(7, yaw)
+    if new_pitch != pitch:
+        pitch = new_pitch
+        board.servoWrite(8, pitch)
 
-board = PicoRobotics.KitronikPicoRobotics() # usex i2c0
+def move_head(wx, wy):
+    step_size = 10
+    new_yaw = max(0, min(130, yaw + wx * step_size))
+    new_pitch = max(60, min(130, pitch + wy * step_size))
+    update_head_position(new_yaw, new_pitch)
 
-i2c1 = I2C(1, sda=Pin(2), scl=Pin(3), freq=100_000)
-heat = AMG88XX(i2c1)
+board = PicoRobotics.KitronikPicoRobotics() # usex i2c1
+
+i2c0 = SoftI2C(scl=Pin(17), sda=Pin(16), freq=100_000)
+heat = AMG88XX(i2c0)
 utime.sleep(1)
 
-yaw = 65
-pitch = 110
-update_head_position()
+yaw = 0
+pitch = 0
+update_head_position(65, 110)
 
 print('AMG88XX, 8x8 pixel heat camera, temperatures in Celsius:')
 while True:

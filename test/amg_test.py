@@ -1,11 +1,13 @@
 from machine import I2C, Pin
+from machine import SoftI2C
 import utime
 from amg88xx import AMG88XX
 
 LINE_UP = '\033[1A'
 LINE_CLEAR = '\x1b[2K'
 
-i2c = I2C(0, sda=Pin(16), scl=Pin(17), freq=100_000)
+#i2c = I2C(0, sda=Pin(16), scl=Pin(17), freq=100_000)
+i2c = SoftI2C(scl=Pin(17), sda=Pin(16), freq=100_000)
 
 sensor = AMG88XX(i2c, skip_scan=True) # i2c device: 105 / 0x69
 utime.sleep(1)
