@@ -1,3 +1,5 @@
+use <addon_support.scad>
+
 bw = 80;  // base width
 wt = 2;   // wall thickness
 
@@ -11,18 +13,13 @@ co = 10;   // cord offset from holder
 
 m = 0.20; // margin
 
-use <addon_support.scad>
+module servo_box() {
+    color("orange") translate([0, 0, -(ht+co)/2]) cube([sw+2*m+2*wt, hl+2*m+2*wt, ht+co], center=true);
+}
 
-module addon_servo() {
-    w = bw-2*wt;
-    
+module servo_holder() {
     difference() {
-        union() {
-            // bar
-            translate([0, -w/2, -wt]) addon_bar(w);
-            // holder
-            color("orange") translate([0, 0, -(ht+co)/2]) cube([sw+2*m+2*wt, hl+2*m+2*wt, ht+co], center=true);
-        }
+        servo_box();
     
         color("orange")  {
             // top hole for holder
@@ -33,6 +30,16 @@ module addon_servo() {
             translate([0, 0, -co]) cube([cw+2*m, hl+2*m, 2*co], center=true);
         }
     }
+}
+
+module addon_servo() {
+    w = bw-2*wt;
+    
+    difference() {
+        translate([0, -w/2, -wt]) addon_bar(w);
+        translate([0, 0, 0.1]) servo_box();
+    }
+    servo_holder();
 }
 
 addon_servo();
