@@ -21,7 +21,7 @@ axel_offset_y = 5;
 axel_offset_z = 5;
 
 module head_base_plate() {
-    color("green") difference() {
+    color("pink") difference() {
         cylinder(h=base_height, d=base_diameter, $fn=16);
     
         translate([base_width/2, -base_diameter/2, -1]) cube([base_diameter/2, base_diameter, base_height+2]);
@@ -77,7 +77,9 @@ module servo_holder_fixed() {
         translate([servo_height/2, 0, servo_width/2+base_height-2]) rotate(90, [0, 1, 0]) servo_holder();
         translate([0, 0, 0.001]) head_base_plate();
         
-        translate([0, 0, -servo_width/2]) cylinder(h=servo_width*2, d=mount_diameter1+2*margin, $fn=20);
+        color("red")
+        translate([0, 0, -servo_width/2])
+        cylinder(h=servo_width*2, d=mount_diameter1+2*margin, $fn=20);
     }
 }
 

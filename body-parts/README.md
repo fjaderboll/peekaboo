@@ -1,7 +1,8 @@
-# 3D-printable case
+# Body parts - 3D-printable
 These models are made using OpenSCAD.
 
 ## Base / inside
+
 * **Grey** base frame
 * **Red/blue** snap-on to crawler
 * **Aqua** ultrasonic holders
@@ -11,7 +12,14 @@ These models are made using OpenSCAD.
 
 ![base](base.png "Base")
 
+## Head
+Just a servo-tilt for now.
+Will later have sockets for heat camera and PIR
+and addon holders for exterior case.
+
+![head](head.png "Head")
+
 ## Chassi / outside
-Will go into outer addon holders.
+Will go into the outer addon holders.
 
 TODO

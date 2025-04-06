@@ -11,8 +11,8 @@ and ultrasonic sensors for navigating a flat surface with obstacles.
 If left unattended it will go to asleep and awoken by a PIR sensor.
 
 ## Parts
+* Crawler: wheel base with motors and battery pack
 * Microcontroller: [Raspberry Pi Pico H](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#pico-1-family) ([pinout](https://www.raspberrypi.com/documentation/microcontrollers/images/pico-pinout.svg))
-* ~~Display: SH1107 ([library](https://github.com/peter-l5/SH1107))~~
 * Heat camera: AMG8833 ([library](https://github.com/peterhinch/micropython-amg88xx))
 * Motor/servo shield: [Kitronik Robotics Board](https://github.com/KitronikLtd/Kitronik-Pico-Robotics-Board-MicroPython) ([pinout](https://kitronik.co.uk/cdn/shop/products/5329_additional-1-kitronik-robotics-board-for-raspberry-pi-pico_800x.jpg))
 * Servo motors: 2 x SG90
@@ -20,9 +20,9 @@ If left unattended it will go to asleep and awoken by a PIR sensor.
 * Ultrasonic sensors: 4 x HC-SR04
 * Sound: Passive piezo buzzer
 * Power switch: Toggle switch
-* Case/structure: [3D printed parts](case/README.md)
+* Body parts: [see more here](body-parts/README.md)
 
-**\*** SR505 needs 5-12V to behave correctly, and the Robotics Board supply only 3.3V for peripherals.
+**\*** SR505 needs 5-12V to behave correctly, and the Robotics Board supply only 3.3V for peripherals, so *VIN* connected directly to the battery PIN.
 
 ## IDE
 Either works:
