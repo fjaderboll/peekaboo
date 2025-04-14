@@ -2,7 +2,7 @@ use <addon_servo.scad>
 
 mount_diameter1 = 7;
 mount_diameter2 = 6;
-mount_diameter3 = 4;
+mount_diameter3 = 4.5;
 mount_quad_diameter = 3.7;
 mount_quad_length = 20;
 mount_height = 1.5;
@@ -32,7 +32,7 @@ module head_base_plate() {
 module mount_center() {
     color("red")
     translate([0, 0, -mount_height-margin])
-    cylinder(h=base_height+2, d=mount_diameter1+2*margin, $fn=20);
+    cylinder(h=base_height+2, d=mount_diameter1+2*margin, $fn=40);
 }
 
 module mount_single() {
@@ -41,10 +41,10 @@ module mount_single() {
     color("red")
     translate([0, 0, base_height-mount_height-margin])
     hull() {
-        cylinder(h=mount_height+margin*2, d=mount_diameter2+margin, $fn=20);
+        cylinder(h=mount_height+margin*2, d=mount_diameter2+margin, $fn=40);
         
         translate([0, mount_length-mount_diameter3/2+margin, 0])
-        cylinder(h=mount_height+margin*2, d=mount_diameter3+margin, $fn=20);
+        cylinder(h=mount_height+margin*2, d=mount_diameter3+margin, $fn=40);
     }
 }
 
