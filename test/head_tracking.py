@@ -7,6 +7,13 @@ from amg88xx import AMG88XX
 LINE_UP = '\033[1A'
 LINE_CLEAR = '\x1b[2K'
 
+yawMin = 0
+yawMiddle = 90
+yawMax = 180
+pitchMin = 60
+pitchMiddle = 90
+pitchMax = 140
+
 def find_low_high():
     low = 100
     high = 0
@@ -65,9 +72,9 @@ def update_head_position(new_yaw=0, new_pitch=0):
         board.servoWrite(8, pitch)
 
 def move_head(wx, wy):
-    step_size = 10
-    new_yaw = max(0, min(130, yaw + wx * step_size))
-    new_pitch = max(60, min(130, pitch + wy * step_size))
+    step_size = 5
+    new_yaw = max(yawMin, min(yawMax, yaw + wx * step_size))
+    new_pitch = max(pitchMin, min(pitchMax, pitch + wy * step_size))
     update_head_position(new_yaw, new_pitch)
 
 board = PicoRobotics.KitronikPicoRobotics() # usex i2c1
@@ -78,7 +85,7 @@ utime.sleep(1)
 
 yaw = 0
 pitch = 0
-update_head_position(65, 110)
+update_head_position(yawMiddle, pitchMiddle)
 
 print('AMG88XX, 8x8 pixel heat camera, temperatures in Celsius:')
 while True:
@@ -98,7 +105,7 @@ while True:
     
     print('wx: {:.1f} wy: {:.1f}'.format(wx, wy))
 
-    utime.sleep(0.2)
+    utime.sleep(0.1)
     move_head(wx, wy)
 
     for row in range(8+1):
