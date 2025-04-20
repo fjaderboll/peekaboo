@@ -1,0 +1,138 @@
+import utime
+from amg88xx import AMG88XX
+
+class Head:
+    LINE_UP = '\033[1A'
+    LINE_CLEAR = '\x1b[2K'
+
+    yaw_min = 0
+    yaw_middle = 90
+    yaw_max = 180
+    pitch_min = 60
+    pitch_middle = 90
+    pitch_max = 140
+
+    def __init__(self, board, i2c0, servo_yaw, servo_pitch):
+        self.board = board
+        self.servo_yaw = servo_yaw
+        self.servo_pitch = servo_pitch
+        self.yaw = 0
+        self.pitch = 0
+        self.first_update = True
+        self.first_print = True
+        self.heat = AMG88XX(i2c0)
+        self.update_interval = 100
+        self.last_update_time = 0
+        self.step_size = 5
+        self.found_someone = False
+
+    def find_low_high(self):
+        low = 100
+        high = 0
+        for row in range(8):
+            for col in range(8):
+                temp = self.heat[row, col]
+                if temp < low:
+                    low = temp
+                if temp > high:
+                    high = temp
+        
+        if low == high:
+            high += 1
+        
+        return (low, high)
+
+    def normalize(self, low, high):
+        norm = [[0 for i in range(8)] for j in range(8)]
+        for row in range(8):
+            for col in range(8):
+                norm[row][col] = (self.heat[row, col] - low)/(high - low)
+        
+        return norm
+
+    def find_weight_center(self, arr):
+        wx = 0
+        wy = 0
+        s = 0
+        for x in range(8):
+            for y in range(8):
+                v = arr[x][y]
+                if v > 0.9:
+                    wx += v * x
+                    wy += v * y
+                    s  += v
+        
+        if s == 0:
+            return (0, 0)
+        
+        (rx, ry) = ((wx / s - 4) / 4, (wy / s - 4) / 4)
+        return (-ry, rx)  # consider sensor rotation
+
+    def render_pixel(self, v):
+        chars = ' .:oO@'
+        i = int(v*10/2)
+        return chars[i]
+
+    def update_head_position(self, new_yaw=0, new_pitch=0):
+        if new_yaw != self.yaw:
+            self.yaw = new_yaw
+            self.board.servoWrite(self.servo_yaw, self.yaw)
+        if new_pitch != self.pitch:
+            self.pitch = new_pitch
+            self.board.servoWrite(self.servo_pitch, self.pitch)
+
+    def move_head(self, wx, wy):
+        new_yaw = max(self.yaw_min, min(self.yaw_max, self.yaw + wx * self.step_size))
+        new_pitch = max(self.pitch_min, min(self.pitch_max, self.pitch + wy * self.step_size))
+        self.update_head_position(new_yaw, new_pitch)
+    
+    def print_state(self, print_camera=True, use_numbers=False):
+        if print_camera:
+            if self.first_print:
+                self.first_print = False
+            else:
+                for row in range(8+1):
+                    print(self.LINE_UP, end=self.LINE_CLEAR)
+            
+            for row in range(8):
+                for col in range(7, -1, -1):
+                    if use_numbers:
+                        temp = self.heat[row, col]
+                        print(' {:3d}'.format(temp), end='')
+                    else:
+                        v = self.temp_norm[row][col]
+                        s = self.render_pixel(v)
+                        print(s, end=' ')
+                print()
+        
+        print(f'wx: {self.wx:.1f} wy: {self.wy:.1f} found_someone: {self.found_someone}')
+    
+    def has_found_someone(self):
+        return self.found_someone
+
+    def update(self):
+        if utime.ticks_diff(utime.ticks_ms(), self.last_update_time) > self.update_interval:
+            # update data
+            self.heat.refresh()
+            (low, high) = self.find_low_high()
+            self.temp_norm = self.normalize(low, high)
+            (self.wx, self.wy) = self.find_weight_center(self.temp_norm)
+
+            # detect human
+            th = 0.2
+            averageTemp = 0
+            if -th <= self.wx <= th and -th <= self.wy <= th:
+                for row in range(2, 6):
+                    for col in range(2, 6):
+                        temp = self.heat[row, col]
+                        averageTemp += temp / 16
+            self.found_someone = (averageTemp > 25)
+
+            # move head
+            if self.first_update:
+                self.update_head_position(self.yaw_middle, self.pitch_middle)
+                self.first_update = False
+            else:
+                self.move_head(self.wx, self.wy)
+            
+            self.last_update_time = utime.ticks_ms()

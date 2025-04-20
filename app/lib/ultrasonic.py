@@ -13,5 +13,5 @@ class Ultrasonic:
         self.last_distance = self.sensor.distance_cm()
         return self.last_distance
 
-    def last_distance(self):
+    def get_last_distance(self):
         return self.last_distance

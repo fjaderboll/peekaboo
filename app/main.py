@@ -1,31 +1,35 @@
 import gc
 import utime
 import random
-from machine import Pin
+from machine import Pin, SoftI2C
 
 import PicoRobotics
 from buzzer import Buzzer
 from ultrasonic import Ultrasonic
 
+from head import Head
+from body import Body
+
 print('Starting...')
 
-# --- init variables ---
+# === init variables ===
 pirPin = Pin(19, Pin.IN)
 ledPin = Pin("LED", Pin.OUT)
 
-board = PicoRobotics.KitronikPicoRobotics()
+board = PicoRobotics.KitronikPicoRobotics() # uses i2c1
 buzzer = Buzzer(18)
+i2c0 = SoftI2C(scl=Pin(17), sda=Pin(16), freq=100_000)
+utime.sleep(1)
 
-servoBottom = 7
-servoTop = 8
+sensor_front = Ultrasonic(11, 15, 'Front')
+sensor_left  = Ultrasonic(10, 14, 'Left')
+sensor_right = Ultrasonic(7, 13, 'Right')
+sensor_back  = Ultrasonic(6, 12, 'Back')
 
-ultrasonics = [
-    Ultrasonic(11, 15, 'Front'),
-    Ultrasonic(10, 14, 'Left'),
-    Ultrasonic(7, 13, 'Right'),
-    Ultrasonic(6, 12, 'Back'),
-]
-# --- ---
+head = Head(board, i2c0, servo_yaw=7, servo_pitch=8)
+body = Body(sensor_front, sensor_left, sensor_right, sensor_back)
+
+# === end init variables ===
 
 def mem():
   gc.collect()
@@ -41,17 +45,6 @@ def pir_irq(pin):
         print('PIR motion stopped')
     ledPin.value(pin.value())
 
-def move_head():
-    # servo both
-    for degrees in range(60, 120, 3):
-        board.servoWrite(servoBottom, degrees)
-        board.servoWrite(servoTop, degrees)
-        utime.sleep_ms(30)
-    for degrees in range(120, 90, -1):
-        board.servoWrite(servoBottom, degrees)
-        board.servoWrite(servoTop, degrees)
-        utime.sleep_ms(10)
-
 def play_random_sound(min_tones=2, max_tones=5):
     random_tones = []
     for _ in range(random.randint(min_tones, max_tones)):
@@ -60,20 +53,33 @@ def play_random_sound(min_tones=2, max_tones=5):
     #print(random_tones)
     buzzer.play_song(random_tones, tone_delay=0.2)
 
+
+# === main ===
 pirPin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=pir_irq)
 
 play_random_sound()
-move_head()
-
 print('Started')
 
-us_triggers = {}
+last_found_someone = False
+last_print_time = 0
 while True:
-    for us in ultrasonics:
-        d = us.measure_distance()
-        is_close = 0.1 < d and d < 5  # skip 0 values
-        if is_close and not us_triggers.get(us.get_name(), False):
-            play_random_sound(1, 2)
-            print(f'Proximity {us.get_name()}: {d:.1f} cm')
-        us_triggers[us.get_name()] = is_close
-    utime.sleep_ms(1000)
+    head.update()
+    body.update()
+
+    if head.has_found_someone():
+        if not last_found_someone:
+            print('Found someone')
+            play_random_sound()
+            last_found_someone = True
+    else:
+        if last_found_someone:
+            print('Lost someone')
+            last_found_someone = False
+
+
+    if utime.ticks_diff(utime.ticks_ms(), last_print_time) > 1000:
+        head.print_state(print_camera=False)
+        body.print_state()
+        last_print_time = utime.ticks_ms()
+    
+    utime.sleep_ms(100)
