@@ -5,6 +5,7 @@ wt = 2;   // wall thickness
 
 quick_print = false;
 show_addons = true;
+show_cover = true;
 
 use <base_clip.scad>
 use <ultrasonic-holder.scad>
@@ -12,6 +13,8 @@ use <addon_support.scad>
 use <addon_shield.scad>
 use <addon_servo.scad>
 use <pcb.scad>
+use <cover_back.scad>
+use <cover_front.scad>
 
 module base(height=bh) {
     difference() {
@@ -95,4 +98,14 @@ if(show_addons) {
         pcb(64.4, 53.5);
         translate([64.4+2.6, 0, 0]) pcb(20, 53.3);
     }
+}
+
+if(show_cover) {
+    color("gray")
+    translate([0, bw/2, bh])
+    cover_back();
+    
+    color("gray")
+    translate([0, bw/2, bh])
+    cover_front();
 }

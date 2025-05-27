@@ -24,4 +24,4 @@ Also addon holders for exterior case.
 ## Chassi / outside
 Will go into the outer addon holders.
 
-TODO
+![cover](cover_front_back.png "Cover front/back")
