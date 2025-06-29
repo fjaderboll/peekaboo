@@ -2,7 +2,7 @@ from machine import Pin, PWM
 from utime import sleep
 
 class Buzzer:
-	tones = {
+	tones: dict[str, int] = {
 		"B0": 31,
 		"C1": 33,
 		"CS1": 35,

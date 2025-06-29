@@ -1,18 +1,26 @@
 from buzzer import Buzzer
-import random
+from buzzer_sounds import Sounds
+import time
 
 buzzer = Buzzer(18)
+sounds = Sounds(buzzer)
 
-# song
+print("Startup")
+sounds.play_startup()
+time.sleep(1)
+
+print("Found someone")
+sounds.play_found_someone()
+time.sleep(1)
+
+print("Lost someone")
+sounds.play_lost_someone()
+time.sleep(1)
+
+print("Random sound")
+sounds.play_random_sound()
+time.sleep(1)
+
+print("Play a song")
 song = ["E5","G5","A5","P","E5","G5","B5","A5","P","E5","G5","A5","P","G5","E5"]
 buzzer.play_song(song)
-
-# random tones
-min_msg_len = 2
-max_msg_len = 5
-random_tones = []
-for _ in range(random.randint(min_msg_len, max_msg_len)):
-	random_tone = random.choice(list(buzzer.tones.keys()))
-	random_tones.append(random_tone)
-print(random_tones)
-buzzer.play_song(random_tones, tone_delay=0.2)

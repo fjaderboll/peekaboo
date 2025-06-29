@@ -1,10 +1,10 @@
 import gc
 import utime
-import random
 from machine import Pin, SoftI2C
 
 import PicoRobotics
 from buzzer import Buzzer
+from buzzer_sounds import Sounds
 from ultrasonic import Ultrasonic
 
 from head import Head
@@ -18,6 +18,7 @@ ledPin = Pin("LED", Pin.OUT)
 
 board = PicoRobotics.KitronikPicoRobotics() # uses i2c1
 buzzer = Buzzer(18)
+sounds = Sounds(buzzer)
 i2c0 = SoftI2C(scl=Pin(17), sda=Pin(16), freq=100_000)
 utime.sleep(1)
 
@@ -45,41 +46,46 @@ def pir_irq(pin):
         print('PIR motion stopped')
     ledPin.value(pin.value())
 
-def play_random_sound(min_tones=2, max_tones=5):
-    random_tones = []
-    for _ in range(random.randint(min_tones, max_tones)):
-        random_tone = random.choice(list(buzzer.tones.keys()))
-        random_tones.append(random_tone)
-    #print(random_tones)
-    buzzer.play_song(random_tones, tone_delay=0.2)
-
-
 # === main ===
 pirPin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=pir_irq)
 
-play_random_sound()
 print('Started')
+sounds.play_startup()
 
 last_found_someone = False
 last_print_time = 0
-while True:
-    head.update()
-    body.update()
 
+start_time = utime.ticks_ms()
+start_hold = True
+while True:
+    # beginning
+    if start_hold:
+        start_hold = (utime.ticks_diff(utime.ticks_ms(), start_time) < 7000)
+        if not start_hold:
+            sounds.play_startup_end()
+
+    # move stuff
+    head.update()
+    stand_still = head.has_found_someone() or start_hold
+    body.update(stand_still)
+
+    # did we find someone?
     if head.has_found_someone():
         if not last_found_someone:
             print('Found someone')
-            play_random_sound()
+            sounds.play_found_someone()
             last_found_someone = True
     else:
         if last_found_someone:
             print('Lost someone')
+            sounds.play_lost_someone()
             last_found_someone = False
 
-
+    # debug print state
     if utime.ticks_diff(utime.ticks_ms(), last_print_time) > 1000:
         head.print_state(print_camera=False)
         body.print_state()
         last_print_time = utime.ticks_ms()
     
+    # idle a little
     utime.sleep_ms(100)

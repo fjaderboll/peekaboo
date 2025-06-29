@@ -4,7 +4,7 @@ from ultrasonic import Ultrasonic
 
 class Body:
     def __init__(self, sensor_front: Ultrasonic, sensor_left: Ultrasonic, sensor_right: Ultrasonic, sensor_back: Ultrasonic):
-        self.update_interval = 1000
+        self.sensor_update_interval = 500
         self.last_update_time = 0
         
         self.sensor_front = sensor_front
@@ -23,8 +23,8 @@ class Body:
             print(f'{sensor.get_name()}: {sensor.get_last_distance():.1f} cm', end=' ')
         print()
 
-    def update(self):
-        if utime.ticks_diff(utime.ticks_ms(), self.last_update_time) > self.update_interval:
+    def update(self, stand_still: bool = False):
+        if utime.ticks_diff(utime.ticks_ms(), self.last_update_time) > self.sensor_update_interval:
             for i, sensor in enumerate(self.sensors):
                 distance = sensor.measure_distance()
                 self.distances[i] = distance
