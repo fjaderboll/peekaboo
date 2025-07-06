@@ -6,7 +6,7 @@ class Ultrasonic:
     def __init__(self, trigger_pin, receiver_pin, name):
         self.sensor = HCSR04(trigger_pin=trigger_pin, echo_pin=receiver_pin, echo_timeout_us=10000)
         self.name = name
-        self.distances: deque[float] = deque([], 5)
+        self.distances: deque[float] = deque([], 3)
 
     def get_name(self):
         return self.name

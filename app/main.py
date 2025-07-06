@@ -72,18 +72,18 @@ try:
         # did we find someone?
         if head.has_found_someone():
             if not last_found_someone:
-                print('Found someone')
+                #print('Found someone')
                 sounds.play_found_someone()
                 last_found_someone = True
         else:
             if last_found_someone:
-                print('Lost someone')
+                #print('Lost someone')
                 sounds.play_lost_someone()
                 last_found_someone = False
 
         # debug print state
         if utime.ticks_diff(utime.ticks_ms(), last_print_time) > 1000:
-            head.print_state(print_camera=False)
+            #head.print_state(print_camera=False)
             body.print_state()
             last_print_time = utime.ticks_ms()
         

@@ -33,7 +33,7 @@ class Head:
         return self.yaw
 
     def get_direction_angle(self):
-        return self.yaw - self.yaw_middle
+        return (self.yaw - self.yaw_middle) * -1
     
     def get_pitch(self):
         return self.pitch
@@ -86,6 +86,9 @@ class Head:
         return chars[i]
 
     def update_head_position(self, new_yaw=0, new_pitch=0):
+        new_yaw = int(new_yaw)
+        new_pitch = int(new_pitch)
+
         if new_yaw != self.yaw:
             self.yaw = new_yaw
             self.board.servoWrite(self.servo_yaw, self.yaw)

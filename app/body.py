@@ -5,7 +5,7 @@ from ultrasonic import Ultrasonic
 from head import Head
 
 class Body:
-    DIRECTION_FORWARD: str = 'r'
+    DIRECTION_FORWARD: str = 'r'  # switched reverse and forward to match reality
     DIRECTION_BACKWARD: str = 'f'
     MOTOR_LEFT: int = 1
     MOTOR_RIGHT: int = 2
@@ -19,9 +19,8 @@ class Body:
         self.sensor_back  = sensor_back
         
         self.sensors = [sensor_front, sensor_left, sensor_right, sensor_back]
-        #self.distances: deque[float] = [None, None, None, None]
         self.proximity_threshold = 5
-        self.sensor_update_interval = 500
+        self.sensor_update_interval = 250
         self.last_update_time = 0
 
         self.angle = 0
@@ -29,14 +28,20 @@ class Body:
         self.last_speed = -1
         self.last_angle = -1
 
+        self.mode_text = 'init'
+
     def get_distances(self):
         return [sensor.get_last_distance() for sensor in self.sensors]
 
     def print_state(self):
         for sensor in self.sensors:
-            print(f'{sensor.get_name()}: {sensor.get_last_distance():.1f} cm', end=' ')
-        print()
-    
+            print(f'l{sensor.get_name()}: {sensor.get_last_distance():.1f} cm', end=' ')
+        print(f'speed: {self.speed}, angle: {self.angle}, head_angle: {self.head.get_direction_angle()}, mode: {self.mode_text}')
+
+        #for sensor in self.sensors:
+        #    print(f'c{sensor.get_name()}: {sensor.get_calibrated_distance():.1f} cm', end=' ')
+        #print()
+
     def read_sensors(self):
         for i, sensor in enumerate(self.sensors):
             sensor.measure_distance()
@@ -48,9 +53,11 @@ class Body:
 
     def calculate_movement(self, stand_still: bool = False):
         if stand_still:
+            self.mode_text = 'stand still'
             self.speed = 0
             self.angle = 0
         elif self.head.has_found_someone():
+            self.mode_text = 'found someone'
             self.speed = 0
             self.angle = self.head.get_direction_angle()
         else:
@@ -60,21 +67,24 @@ class Body:
             distance_back  = self.sensor_back.get_calibrated_distance()
             head_angle = self.head.get_direction_angle()
 
-            if distance_front < 5 and distance_back > 10: # move backward
-                print('Body: back')
-                self.speed = 30
-                self.angle = 180 + (20 if distance_left < distance_right else -20)
-            if distance_front < 10: # turn on the spot
-                print('Body: turn on the spot')
+            if distance_front < 10 and distance_back > 10: # move backward
+                self.mode_text = 'back'
+                self.speed = self.get_safe_speed(0)
+                self.angle = 180 + (30 if distance_left < distance_right else -30)
+            elif distance_front < 20: # turn on the spot
+                self.mode_text = 'turn'
                 self.speed = 0
                 self.angle = 30 * (1 if head_angle > 0 else -1)
             else: # move forward against the head angle but stay away from obstacles
-                print('Body: move forward')
+                self.mode_text = 'forward'
                 df = min(1, distance_front / 100)
                 dl = min(1, distance_left / 100)
                 dr = min(1, distance_right / 100)
                 self.speed = self.get_safe_speed(df * 50 + dl * 25 + dr * 25)
                 self.angle = head_angle * 0.5 - dl * 20 + dr * 20
+        
+        self.speed = int(self.speed)
+        self.angle = int(self.angle)
 
     def update_motors(self):
         if self.last_angle == self.angle and self.last_speed == self.speed:
