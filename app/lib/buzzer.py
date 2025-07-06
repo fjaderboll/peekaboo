@@ -104,11 +104,11 @@ class Buzzer:
 		self.buzzer.duty_u16(1000)
 		self.buzzer.freq(frequency)
 	
-	def play_song(self, song, tone_delay=0.3):
-		for i in range(len(song)):
-			if (song[i] == "P"):
+	def play_song(self, tones, tone_delay=0.3):
+		for tone in tones:
+			if (tone == "P"):
 				self.silent()
 			else:
-				self.play_tone(self.tones[song[i]])
+				self.play_tone(self.tones[tone])
 			sleep(tone_delay)
 		self.silent()
