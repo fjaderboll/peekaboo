@@ -27,6 +27,7 @@ class Body:
         self.speed = 0
         self.last_speed = -1
         self.last_angle = -1
+        self.speed_slowdown = 100
 
         self.mode_text = 'init'
 
@@ -49,16 +50,18 @@ class Body:
     def get_safe_speed(self, speed):
         min_speed = 20 # below this the motor doesn't move
         max_speed = 100
-        return max(min_speed, min(speed, max_speed))
+        return int(max(min_speed, min(speed, max_speed)))
 
     def calculate_movement(self, stand_still: bool = False):
         if stand_still:
             self.mode_text = 'stand still'
             self.speed = 0
+            self.speed_slowdown = 100
             self.angle = 0
         elif self.head.has_found_someone():
             self.mode_text = 'found someone'
             self.speed = 0
+            self.speed_slowdown = 100
             self.angle = self.head.get_direction_angle()
         else:
             distance_front = self.sensor_front.get_calibrated_distance()
@@ -69,21 +72,24 @@ class Body:
 
             if distance_front < 10 and distance_back > 10: # move backward
                 self.mode_text = 'back'
-                self.speed = self.get_safe_speed(0)
+                self.speed = 1 # slowest possible
+                self.speed_slowdown = 100
                 self.angle = 180 + (30 if distance_left < distance_right else -30)
             elif distance_front < 20: # turn on the spot
                 self.mode_text = 'turn'
                 self.speed = 0
-                self.angle = 30 * (1 if head_angle > 0 else -1)
+                self.speed_slowdown = max(50, self.speed_slowdown + 5)
+                self.angle = 20 * (1 if head_angle > 0 else -1)
             else: # move forward against the head angle but stay away from obstacles
                 self.mode_text = 'forward'
                 df = min(1, distance_front / 100)
                 dl = min(1, distance_left / 100)
                 dr = min(1, distance_right / 100)
                 self.speed = self.get_safe_speed(df * 50 + dl * 25 + dr * 25)
+                self.speed_slowdown = max(0, self.speed_slowdown - 5)
                 self.angle = head_angle * 0.5 - dl * 20 + dr * 20
         
-        self.speed = int(self.speed)
+        self.speed = self.speed if self.speed == 0 else self.get_safe_speed(self.speed - self.speed_slowdown)
         self.angle = int(self.angle)
 
     def update_motors(self):
@@ -94,8 +100,8 @@ class Body:
             self.stop_motors()
         elif self.speed == 0:
             angle_speed = self.get_safe_speed(abs(self.angle))
-            self.board.motorOn(self.MOTOR_LEFT,  self.DIRECTION_BACKWARD if angle_speed < 0 else self.DIRECTION_FORWARD, angle_speed)
-            self.board.motorOn(self.MOTOR_RIGHT, self.DIRECTION_BACKWARD if angle_speed > 0 else self.DIRECTION_FORWARD, angle_speed)
+            self.board.motorOn(self.MOTOR_LEFT,  self.DIRECTION_BACKWARD if self.angle < 0 else self.DIRECTION_FORWARD, angle_speed)
+            self.board.motorOn(self.MOTOR_RIGHT, self.DIRECTION_BACKWARD if self.angle > 0 else self.DIRECTION_FORWARD, angle_speed)
         else:
             direction = self.DIRECTION_FORWARD if abs(self.angle) <= 90 else self.DIRECTION_BACKWARD
             speed_left = self.get_safe_speed(self.speed - (0 if self.angle >= 0 else self.angle))
