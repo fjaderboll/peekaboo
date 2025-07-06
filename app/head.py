@@ -1,4 +1,7 @@
+from machine import SoftI2C
 import utime
+
+from PicoRobotics import KitronikPicoRobotics
 from amg88xx import AMG88XX
 
 class Head:
@@ -12,7 +15,7 @@ class Head:
     pitch_middle = 90
     pitch_max = 140
 
-    def __init__(self, board, i2c0, servo_yaw, servo_pitch):
+    def __init__(self, board: KitronikPicoRobotics, i2c0: SoftI2C, servo_yaw: int, servo_pitch: int):
         self.board = board
         self.servo_yaw = servo_yaw
         self.servo_pitch = servo_pitch
@@ -25,6 +28,15 @@ class Head:
         self.last_update_time = 0
         self.step_size = 5
         self.found_someone = False
+    
+    def get_yaw(self):
+        return self.yaw
+
+    def get_direction_angle(self):
+        return self.yaw - self.yaw_middle
+    
+    def get_pitch(self):
+        return self.pitch
 
     def find_low_high(self):
         low = 100

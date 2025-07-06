@@ -28,7 +28,7 @@ sensor_right = Ultrasonic(7, 13, 'Right')
 sensor_back  = Ultrasonic(6, 12, 'Back')
 
 head = Head(board, i2c0, servo_yaw=7, servo_pitch=8)
-body = Body(sensor_front, sensor_left, sensor_right, sensor_back)
+body = Body(board, head, sensor_front, sensor_left, sensor_right, sensor_back)
 
 # === end init variables ===
 
@@ -57,35 +57,41 @@ last_print_time = 0
 
 start_time = utime.ticks_ms()
 start_hold = True
-while True:
-    # beginning
-    if start_hold:
-        start_hold = (utime.ticks_diff(utime.ticks_ms(), start_time) < 7000)
-        if not start_hold:
-            sounds.play_startup_end()
+try:
+    while True:
+        # beginning
+        if start_hold:
+            start_hold = (utime.ticks_diff(utime.ticks_ms(), start_time) < 7000)
+            if not start_hold:
+                sounds.play_startup_end()
 
-    # move stuff
-    head.update()
-    stand_still = head.has_found_someone() or start_hold
-    body.update(stand_still)
+        # move stuff
+        head.update()
+        body.update(start_hold)
 
-    # did we find someone?
-    if head.has_found_someone():
-        if not last_found_someone:
-            print('Found someone')
-            sounds.play_found_someone()
-            last_found_someone = True
-    else:
-        if last_found_someone:
-            print('Lost someone')
-            sounds.play_lost_someone()
-            last_found_someone = False
+        # did we find someone?
+        if head.has_found_someone():
+            if not last_found_someone:
+                print('Found someone')
+                sounds.play_found_someone()
+                last_found_someone = True
+        else:
+            if last_found_someone:
+                print('Lost someone')
+                sounds.play_lost_someone()
+                last_found_someone = False
 
-    # debug print state
-    if utime.ticks_diff(utime.ticks_ms(), last_print_time) > 1000:
-        head.print_state(print_camera=False)
-        body.print_state()
-        last_print_time = utime.ticks_ms()
-    
-    # idle a little
-    utime.sleep_ms(100)
+        # debug print state
+        if utime.ticks_diff(utime.ticks_ms(), last_print_time) > 1000:
+            head.print_state(print_camera=False)
+            body.print_state()
+            last_print_time = utime.ticks_ms()
+        
+        # idle a little
+        utime.sleep_ms(100)
+except KeyboardInterrupt:
+    print('KeyboardInterrupt')
+finally:
+    print('Shutting down')
+    body.stop_motors()
+    buzzer.silent()
