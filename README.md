@@ -1,5 +1,5 @@
 # Peek-a-boo
-**NOTE** *Early in development, it does currently not yet fully work as intended, but it is moving*
+**NOTE** *Still in development, it does currently not yet fully work as intended*
 
 A mobile robot that like to play hide-n-seek with you or just
 follow you around.
