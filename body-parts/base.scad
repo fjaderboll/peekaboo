@@ -15,6 +15,8 @@ use <addon_servo.scad>
 use <pcb.scad>
 use <cover_back.scad>
 use <cover_front.scad>
+use <head_face.scad>
+use <head_antenna.scad>
 
 module base(height=bh) {
     difference() {
@@ -108,4 +110,11 @@ if(show_cover) {
     color("gray")
     translate([0, bw/2, bh])
     cover_front();
+    
+    translate([bl-15, bw/2, bh])
+    rotate(90, [0, 0, 1]) {
+        color("gray")
+        head_face();
+        #head_antenna();
+    }
 }

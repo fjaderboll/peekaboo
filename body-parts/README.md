@@ -16,7 +16,7 @@ These models are made using OpenSCAD.
 Servo-tilt with sockets for the heat camera and the PIR sensor.
 Also addon holders for exterior case.
 
-* **Yellow/blue** tilt/pitch frame with heat camera and PIR (`head_tilt.scad`)
+* **Yellow/blue** tilt/pitch frame with heat camera and PIR mount (`head_tilt.scad`)
 * **Orange/pink** base/yaw holder for frame (`head_base.scad`)
 
 ![head](head.png "Head")
@@ -24,4 +24,4 @@ Also addon holders for exterior case.
 ## Chassi / outside
 Will go into the outer addon holders.
 
-![cover](cover_front_back.png "Cover front/back")
+![cover](cover.png "Cover")
