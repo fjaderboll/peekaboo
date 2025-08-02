@@ -66,8 +66,6 @@ module head_tilt_frame() {
 }
 
 module head_tilt() {
-    % head_base();
-    
     // frame
     translate([0, 0, axel_offset_z*2])
     translate([0, axel_offset_y, 0])
@@ -97,4 +95,5 @@ module head_tilt() {
     addon_holder();
 }
 
+% color("gray") head_base();
 head_tilt();
