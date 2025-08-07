@@ -31,8 +31,8 @@ Upload content in folder `app` into root of the microcontroller. (VSCode command
 
 ## Limitations and room for improvements
 The head will focus on the warmest thing in view, which works pretty well.
-However, the "human detection" is very simplistic; if the heat camera's image has an
-average temperature above 25 degrees, like a close-up face, hand or oven, it's a hit.
+However, the "human detection" is very simplistic; if the center of the heat
+camera's image has an average temperature above 25 degrees it's a hit.
 It's not much you can do with a 8x8 pixel image, but some form of shape
 recognition would be possible.
 

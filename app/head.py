@@ -8,12 +8,12 @@ class Head:
     LINE_UP = '\033[1A'
     LINE_CLEAR = '\x1b[2K'
 
-    yaw_min = 0
+    yaw_min = 30
     yaw_middle = 90
-    yaw_max = 180
+    yaw_max = 150
     pitch_min = 60
     pitch_middle = 90
-    pitch_max = 140
+    pitch_max = 110
 
     def __init__(self, board: KitronikPicoRobotics, i2c0: SoftI2C, servo_yaw: int, servo_pitch: int):
         self.board = board
@@ -124,6 +124,9 @@ class Head:
     
     def has_found_someone(self):
         return self.found_someone
+    
+    def sleep_position(self):
+        self.update_head_position(self.yaw_middle, self.pitch_max)
 
     def update(self):
         if utime.ticks_diff(utime.ticks_ms(), self.last_update_time) > self.update_interval:

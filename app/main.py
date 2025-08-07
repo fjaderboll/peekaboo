@@ -40,26 +40,31 @@ def mem():
   print(f'Memory used: {alloc/total*100:.1f}%')
 
 def pir_irq(pin):
+    global sleep_mode
+
     if pin.value():
         print('PIR detected motion')
+        sleep_mode = False
     else:
         print('PIR motion stopped')
+    
     ledPin.value(pin.value())
 
-# === main ===
-pirPin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=pir_irq)
+def start():
+    global sleep_mode
 
-print('Started')
-sounds.play_startup()
+    print('Started')
+    sounds.play_startup()
 
-last_found_someone = False
-last_print_time = 0
+    start_time = utime.ticks_ms()
+    start_hold = True
+    last_found_time = start_time
+    last_found_someone = False
+    last_print_time = 0
+    sleep_mode = False
 
-start_time = utime.ticks_ms()
-start_hold = True
-try:
     while True:
-        # beginning
+        # stay still initially
         if start_hold:
             start_hold = (utime.ticks_diff(utime.ticks_ms(), start_time) < 7000)
             if not start_hold:
@@ -72,14 +77,24 @@ try:
         # did we find someone?
         if head.has_found_someone():
             if not last_found_someone:
-                #print('Found someone')
+                print('Found someone')
                 sounds.play_found_someone()
                 last_found_someone = True
+                last_found_time = utime.ticks_ms()
         else:
             if last_found_someone:
-                #print('Lost someone')
+                print('Lost someone')
                 sounds.play_lost_someone()
                 last_found_someone = False
+            
+            # go to sleep after if no one found in a while
+            if utime.ticks_diff(utime.ticks_ms(), last_found_time) > 60000:
+                print('Entering sleep mode')
+                body.stop_motors()
+                head.sleep_position()
+                sleep_mode = True
+                sounds.play_sleep()
+                break
 
         # debug print state
         if utime.ticks_diff(utime.ticks_ms(), last_print_time) > 1000:
@@ -89,6 +104,16 @@ try:
         
         # idle a little
         utime.sleep_ms(100)
+
+# === main ===
+sleep_mode = False
+pirPin.irq(trigger=Pin.IRQ_RISING | Pin.IRQ_FALLING, handler=pir_irq)
+
+try:
+    while True:
+        if not sleep_mode:
+            start()
+        utime.sleep_ms(500)
 except KeyboardInterrupt:
     print('KeyboardInterrupt')
 finally:

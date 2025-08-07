@@ -9,12 +9,12 @@ board = PicoRobotics.KitronikPicoRobotics()
 servoBottom = 7
 servoTop = 8
 
-bottomMin = 0
+bottomMin = 30
 bottomMiddle = 90
-bottomMax = 180
+bottomMax = 150
 topMin = 60
 topMiddle = 90
-topMax = 140
+topMax = 110
 
 # servo bottom
 for degrees in range(bottomMin, bottomMax, 3):

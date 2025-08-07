@@ -27,6 +27,9 @@ class Sounds:
 
 	def play_startup(self):
 		self.play_song(['G7', 'A7', 'B7', 'C8', 'D8'], tone_delay=0.1)
+	
+	def play_sleep(self):
+		self.play_song(['C6', 'C8', 'P', 'C8'], tone_delay=0.1)
 
 	def play_found_someone(self):
 		self.play_song(['D8', 'G7', 'D8', 'G7'], tone_delay=0.1)

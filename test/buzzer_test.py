@@ -9,6 +9,14 @@ print("Startup")
 sounds.play_startup()
 time.sleep(1)
 
+print("Startup (end)")
+sounds.play_startup_end()
+time.sleep(1)
+
+print("Sleep")
+sounds.play_sleep()
+time.sleep(1)
+
 print("Found someone")
 sounds.play_found_someone()
 time.sleep(1)
