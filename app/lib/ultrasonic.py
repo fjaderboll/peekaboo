@@ -13,6 +13,8 @@ class Ultrasonic:
     
     def measure_distance(self):
         distance = self.sensor.distance_cm()
+        if int(distance) == 0:
+            distance = 100 # assume large distance if sensor fails to receive echo
         self.distances.append(distance)
         return distance
 
