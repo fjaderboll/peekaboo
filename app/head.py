@@ -8,12 +8,12 @@ class Head:
     LINE_UP = '\033[1A'
     LINE_CLEAR = '\x1b[2K'
 
-    yaw_min = 30
-    yaw_middle = 90
-    yaw_max = 150
-    pitch_min = 60
-    pitch_middle = 90
-    pitch_max = 110
+    YAW_MIN = 30
+    YAW_MIDDLE = 90
+    YAW_MAX = 150
+    PITCH_MIN = 60
+    PITCH_MIDDLE = 90
+    PITCH_MAX = 110
 
     def __init__(self, board: KitronikPicoRobotics, i2c0: SoftI2C, servo_yaw: int, servo_pitch: int):
         self.board = board
@@ -33,8 +33,8 @@ class Head:
         return self.yaw
 
     def get_direction_angle(self):
-        return (self.yaw - self.yaw_middle) * -1
-    
+        return (self.yaw - self.YAW_MIDDLE) * -1
+
     def get_pitch(self):
         return self.pitch
 
@@ -97,8 +97,8 @@ class Head:
             self.board.servoWrite(self.servo_pitch, self.pitch)
 
     def move_head(self, wx, wy):
-        new_yaw = max(self.yaw_min, min(self.yaw_max, self.yaw + wx * self.step_size))
-        new_pitch = max(self.pitch_min, min(self.pitch_max, self.pitch + wy * self.step_size))
+        new_yaw = max(self.YAW_MIN, min(self.YAW_MAX, self.yaw + wx * self.step_size))
+        new_pitch = max(self.PITCH_MIN, min(self.PITCH_MAX, self.pitch + wy * self.step_size))
         self.update_head_position(new_yaw, new_pitch)
     
     def print_state(self, print_camera=True, use_numbers=False):
@@ -125,8 +125,15 @@ class Head:
     def has_found_someone(self):
         return self.found_someone
     
-    def sleep_position(self):
-        self.update_head_position(self.yaw_middle, self.pitch_max)
+    def sleep_position(self, instant=False):
+        if not instant:
+            steps = 10
+            yaw_step = (self.YAW_MIDDLE - self.yaw) // steps
+            pitch_step = (self.PITCH_MAX - self.pitch) // steps
+            for _ in range(0, steps):
+                self.update_head_position(self.yaw + yaw_step, self.pitch + pitch_step)
+                utime.sleep_ms(30)
+        self.update_head_position(self.YAW_MIDDLE, self.PITCH_MAX)
 
     def update(self):
         if utime.ticks_diff(utime.ticks_ms(), self.last_update_time) > self.update_interval:
@@ -148,7 +155,7 @@ class Head:
 
             # move head
             if self.first_update:
-                self.update_head_position(self.yaw_middle, self.pitch_middle)
+                self.update_head_position(self.YAW_MIDDLE, self.PITCH_MIDDLE)
                 self.first_update = False
             else:
                 self.move_head(self.wx, self.wy)
