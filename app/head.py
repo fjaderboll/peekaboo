@@ -24,7 +24,7 @@ class Head:
         self.first_update = True
         self.first_print = True
         self.heat = AMG88XX(i2c0)
-        self.update_interval = 100
+        self.update_interval = 50
         self.last_update_time = 0
         self.step_size = 5
         self.found_someone = False

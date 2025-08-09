@@ -103,7 +103,7 @@ def start():
             last_print_time = utime.ticks_ms()
         
         # idle a little
-        utime.sleep_ms(100)
+        utime.sleep_ms(10)
 
 # === main ===
 sleep_mode = False

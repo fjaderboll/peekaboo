@@ -14,4 +14,4 @@ print('AMG88XX, 8x8 pixel heat camera, temperatures in Celsius:')
 while True:
     head.update()
     head.print_state(use_numbers=True)
-    utime.sleep(0.1)
+    utime.sleep_ms(10)

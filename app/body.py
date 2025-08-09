@@ -9,6 +9,8 @@ class Body:
     DIRECTION_BACKWARD: str = 'f'
     MOTOR_LEFT: int = 1
     MOTOR_RIGHT: int = 2
+    SPEED_MIN: int = 25  # below this the motor doesn't move
+    SPEED_MAX: int = 100
 
     def __init__(self, board: KitronikPicoRobotics, head: Head, sensor_front: Ultrasonic, sensor_left: Ultrasonic, sensor_right: Ultrasonic, sensor_back: Ultrasonic):
         self.board = board
@@ -23,8 +25,8 @@ class Body:
         self.sensor_update_interval = 250
         self.last_update_time = 0
 
-        self.angle = 0
-        self.speed = 0
+        self.angle = 0        # range: -180 to +180
+        self.speed = 0        # range:    0 to +100
         self.last_speed = -1
         self.last_angle = -1
         self.speed_slowdown = 100
@@ -48,9 +50,7 @@ class Body:
             sensor.measure_distance()
     
     def get_safe_speed(self, speed):
-        min_speed = 20 # below this the motor doesn't move
-        max_speed = 100
-        return int(max(min_speed, min(speed, max_speed)))
+        return int(max(self.SPEED_MIN, min(speed, self.SPEED_MAX)))
 
     def calculate_movement(self, stand_still: bool = False):
         if stand_still:
@@ -70,11 +70,11 @@ class Body:
             distance_back  = self.sensor_back.get_calibrated_distance()
             head_angle = self.head.get_direction_angle()
 
-            if distance_front < 10 and distance_back > 10: # move backward
+            if distance_front < 10 and distance_back > 10: # move backward (at an angle)
                 self.mode_text = 'back'
                 self.speed = 1 # slowest possible
                 self.speed_slowdown = 100
-                self.angle = 180 + (30 if distance_left < distance_right else -30)
+                self.angle = (-150 if distance_left < distance_right else 150)
             elif distance_front < 20: # turn on the spot
                 self.mode_text = 'turn'
                 self.speed = 0
@@ -87,7 +87,7 @@ class Body:
                 dr = min(1, distance_right / 100)
                 self.speed = self.get_safe_speed(df * 50 + dl * 25 + dr * 25)
                 self.speed_slowdown = max(0, self.speed_slowdown - 5)
-                self.angle = head_angle * 0.5 - dl * 20 + dr * 20
+                self.angle = head_angle * 1.0 - dl * 30 + dr * 30
         
         self.speed = self.speed if self.speed == 0 else self.get_safe_speed(self.speed - self.speed_slowdown)
         self.angle = int(self.angle)
@@ -104,9 +104,16 @@ class Body:
             self.board.motorOn(self.MOTOR_RIGHT, self.DIRECTION_BACKWARD if self.angle > 0 else self.DIRECTION_FORWARD, angle_speed)
         else:
             direction = self.DIRECTION_FORWARD if abs(self.angle) <= 90 else self.DIRECTION_BACKWARD
-            speed_left = self.get_safe_speed(self.speed - (0 if self.angle >= 0 else self.angle))
-            speed_right = self.get_safe_speed(self.speed - (0 if self.angle <= 0 else self.angle))
-            
+            angle_offset_speed = abs(self.angle) if abs(self.angle) <= 90 else 180 - abs(self.angle)
+            speed_left = self.get_safe_speed(self.speed - (0 if self.angle >= 0 else angle_offset_speed))
+            speed_right = self.get_safe_speed(self.speed - (0 if self.angle <= 0 else angle_offset_speed))
+
+            if speed_left == self.SPEED_MIN and speed_right == self.SPEED_MIN and self.angle not in [0, 180]:
+                if self.angle < 0:
+                    speed_left = 0
+                else:
+                    speed_right = 0
+
             self.board.motorOn(self.MOTOR_LEFT, direction, speed_left)
             self.board.motorOn(self.MOTOR_RIGHT, direction, speed_right)
 
