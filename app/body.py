@@ -63,6 +63,8 @@ class Body:
             self.speed = 0
             self.speed_slowdown = 100
             self.angle = self.head.get_direction_angle()
+            if abs(self.angle) < 30:
+                self.angle = 0
         else:
             distance_front = self.sensor_front.get_calibrated_distance()
             distance_left  = self.sensor_left.get_calibrated_distance()
@@ -130,4 +132,6 @@ class Body:
             self.calculate_movement(stand_still)
             self.update_motors()
             self.last_update_time = utime.ticks_ms()
+            return True
+        return False
         

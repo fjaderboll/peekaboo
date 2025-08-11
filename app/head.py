@@ -144,7 +144,7 @@ class Head:
             (self.wx, self.wy) = self.find_weight_center(self.temp_norm)
 
             # detect human
-            th = 0.2
+            th = 0.5
             averageTemp = 0
             if -th <= self.wx <= th and -th <= self.wy <= th:
                 for row in range(2, 6):
@@ -161,3 +161,5 @@ class Head:
                 self.move_head(self.wx, self.wy)
             
             self.last_update_time = utime.ticks_ms()
+            return True
+        return False
