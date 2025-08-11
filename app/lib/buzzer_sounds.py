@@ -26,16 +26,16 @@ class Sounds:
 		self.play_song(random_tones, tone_delay=0.2)
 
 	def play_startup(self):
-		self.play_song(['G7', 'A7', 'B7', 'C8', 'D8'], tone_delay=0.1)
-	
+		self.play_song(['G4', 'A4', 'B4', 'C5', 'D5'], tone_delay=0.1)
+
 	def play_sleep(self):
-		self.play_song(['C6', 'C8', 'P', 'C8'], tone_delay=0.1)
+		self.buzzer.play_song(['D5', 'C5', 'B4', 'A4', 'G4'], tone_delay=0.1)
 
 	def play_found_someone(self):
-		self.play_song(['D8', 'G7', 'D8', 'G7'], tone_delay=0.1)
+		self.play_song(['D5', 'G4', 'D5', 'G4'], tone_delay=0.1)
 
 	def play_lost_someone(self):
-		self.play_song(['B7'], tone_delay=0.1)
+		self.play_song(['B4'], tone_delay=0.1)
 	
 	def play_startup_end(self):
-		self.play_song(['C6', 'C8', 'P', 'C8'], tone_delay=0.1)
+		self.play_song(['C3', 'C5', 'P', 'C5'], tone_delay=0.1)
