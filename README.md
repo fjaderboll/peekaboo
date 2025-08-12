@@ -10,6 +10,8 @@ More technically, it will use a heat camera to detect humans
 and ultrasonic sensors for navigating a flat surface with obstacles.
 If left unattended it will go to asleep and awoken by movement.
 
+Watch it in action on [YouTube](https://www.youtube.com/watch?v=vqpeKBAsQWM).
+
 ## Hardware parts
 * Crawler: wheel base with motors and battery pack
 * Microcontroller: [Raspberry Pi Pico H](https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html#pico-1-family) ([pinout](https://www.raspberrypi.com/documentation/microcontrollers/images/pico-pinout.svg))
